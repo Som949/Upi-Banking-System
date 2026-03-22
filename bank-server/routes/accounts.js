@@ -270,3 +270,385 @@ router.post("/create", verifyToken, checkDefaultPassword, async (req, res) => {
 });
 
 module.exports = router;
+
+
+//.............................................................................................................................
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 💰 POST /account/deposit
+// Body: { account_number, amount }
+// Headers: Authorization: Bearer <token>
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+router.post("/deposit", verifyToken, checkDefaultPassword, async (req, res) => {
+  try {
+    const { account_number, amount } = req.body;
+
+    // ── Validations ──────────────────────────────────
+    if (!account_number || !amount) {
+      return res.status(400).json({
+        success: false,
+        message: "account_number aur amount dono chahiye.",
+      });
+    }
+
+   if (isNaN(amount) || Number(amount) <= 0) {
+  return res.status(400).json({
+    success: false,
+    message: "Amount valid aur 0 se zyada hona chahiye.",
+  });
+}
+
+// ── Daily Deposit Limit Check ─────────────────────
+const today = new Date().toISOString().split("T")[0];
+
+const depositTodayResult = await pool.query(
+  `SELECT COALESCE(SUM(amount), 0) as total
+   FROM transactions
+   WHERE receiver_account_no = $1
+   AND txn_type = 'deposit'
+   AND DATE(txn_timestamp) = $2
+   AND status = 'success'`,
+  [account_number, today]
+);
+
+const depositedToday = Number(depositTodayResult.rows[0].total);
+const DAILY_DEPOSIT_LIMIT = Number(process.env.DAILY_DEPOSIT_LIMIT) || 100000;
+
+if (depositedToday + Number(amount) > DAILY_DEPOSIT_LIMIT) {
+  return res.status(400).json({
+    success: false,
+    message: `Daily deposit limit ₹${DAILY_DEPOSIT_LIMIT} exceed ho jaayegi. Aaj already ₹${depositedToday} deposit ho chuka hai. Aur sirf ₹${DAILY_DEPOSIT_LIMIT - depositedToday} deposit kar sakte ho.`,
+  });
+}
+
+    // ── Account exist karta hai? ──────────────────────
+    const userResult = await pool.query(
+      "SELECT * FROM users WHERE account_number = $1",
+      [account_number]
+    );
+
+    const user = userResult.rows[0];
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Account number nahi mila.",
+      });
+    }
+
+    if (!user.is_active) {
+      return res.status(403).json({
+        success: false,
+        message: "Account inactive hai.",
+      });
+    }
+
+    // ── Balance Update ────────────────────────────────
+    const newBalance = Number(user.balance) + Number(amount);
+
+    await pool.query(
+      "UPDATE users SET balance = $1 WHERE account_number = $2",
+      [newBalance, account_number]
+    );
+
+    // ── Transaction Record ────────────────────────────
+    await pool.query(
+      `INSERT INTO transactions
+        (receiver_account_no, sender_account_no, amount, txn_type, txn_source, status, txn_timestamp)
+       VALUES ($1, null, $2, 'deposit', 'bank', 'success', NOW())`,
+      [account_number, amount]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: `₹${amount} successfully deposit ho gaya!`,
+      data: {
+        account_number,
+        full_name: user.full_name,
+        deposited_amount: Number(amount),
+        new_balance: newBalance,
+      },
+    });
+
+  } catch (err) {
+    console.error("Deposit error:", err);
+    return res.status(500).json({ success: false, message: "Server error." });
+  }
+});
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 💸 POST /account/withdraw
+// Body: { account_number, amount }
+// Headers: Authorization: Bearer <token>
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+router.post("/withdraw", verifyToken, checkDefaultPassword, async (req, res) => {
+  try {
+    const { account_number, amount } = req.body;
+
+    // ── Validations ──────────────────────────────────
+    if (!account_number || !amount) {
+      return res.status(400).json({
+        success: false,
+        message: "account_number aur amount dono chahiye.",
+      });
+    }
+
+    if (isNaN(amount) || Number(amount) <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Amount valid aur 0 se zyada hona chahiye.",
+      });
+    }
+
+    // ── Account fetch ─────────────────────────────────
+    const userResult = await pool.query(
+      "SELECT * FROM users WHERE account_number = $1",
+      [account_number]
+    );
+
+    const user = userResult.rows[0];
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Account number nahi mila.",
+      });
+    }
+
+    if (!user.is_active) {
+      return res.status(403).json({
+        success: false,
+        message: "Account inactive hai.",
+      });
+    }
+
+    // ── Sufficient Balance Check ──────────────────────
+    if (Number(user.balance) < Number(amount)) {
+      return res.status(400).json({
+        success: false,
+        message: `Insufficient balance. Current balance: ₹${user.balance}`,
+      });
+    }
+
+// ── Daily Withdraw Limit Check ────────────────────
+const today = new Date().toISOString().split("T")[0];
+
+const withdrawTodayResult = await pool.query(
+  `SELECT COALESCE(SUM(amount), 0) as total
+   FROM transactions
+   WHERE sender_account_no = $1
+   AND txn_type = 'withdrawal'
+   AND DATE(txn_timestamp) = $2
+   AND status = 'success'`,
+  [account_number, today]
+);
+
+const withdrawnToday = Number(withdrawTodayResult.rows[0].total);
+const DAILY_WITHDRAW_LIMIT = Number(process.env.DAILY_WITHDRAW_LIMIT) || 100000;
+
+if (withdrawnToday + Number(amount) > DAILY_WITHDRAW_LIMIT) {
+  return res.status(400).json({
+    success: false,
+    message: `Daily withdrawal limit ₹${DAILY_WITHDRAW_LIMIT} exceed ho jaayegi. Aaj already ₹${withdrawnToday} withdraw ho chuka hai. Aur sirf ₹${DAILY_WITHDRAW_LIMIT - withdrawnToday} withdraw kar sakte ho.`,
+  });
+}
+
+// ── Balance Update ────────────────────────────────
+const newBalance = Number(user.balance) - Number(amount);
+
+    await pool.query(
+      "UPDATE users SET balance = $1 WHERE account_number = $2",
+      [newBalance, account_number]
+    );
+
+    // ── Transaction Record ────────────────────────────
+    await pool.query(
+      `INSERT INTO transactions
+        (sender_account_no, receiver_account_no, amount, txn_type, txn_source, status, txn_timestamp)
+       VALUES ($1, null, $2, 'withdrawal', 'bank', 'success', NOW())`,
+      [account_number, amount]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: `₹${amount} successfully withdraw ho gaya!`,
+      data: {
+        account_number,
+        full_name: user.full_name,
+        withdrawn_amount: Number(amount),
+        new_balance: newBalance,
+      },
+    });
+
+  } catch (err) {
+    console.error("Withdraw error:", err);
+    return res.status(500).json({ success: false, message: "Server error." });
+  }
+});
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 🔄 POST /account/transfer
+// Body: { sender_account_no, receiver_account_no, amount }
+// Headers: Authorization: Bearer <token>
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+router.post("/transfer", verifyToken, checkDefaultPassword, async (req, res) => {
+  try {
+    const { sender_account_no, receiver_account_no, amount } = req.body;
+
+    // ── Validations ──────────────────────────────────
+    if (!sender_account_no || !receiver_account_no || !amount) {
+      return res.status(400).json({
+        success: false,
+        message: "sender_account_no, receiver_account_no aur amount chahiye.",
+      });
+    }
+
+    if (sender_account_no === receiver_account_no) {
+      return res.status(400).json({
+        success: false,
+        message: "Sender aur receiver account same nahi ho sakta.",
+      });
+    }
+
+    if (isNaN(amount) || Number(amount) <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Amount valid aur 0 se zyada hona chahiye.",
+      });
+    }
+
+    // ── Sender fetch ──────────────────────────────────
+    const senderResult = await pool.query(
+      "SELECT * FROM users WHERE account_number = $1",
+      [sender_account_no]
+    );
+    const sender = senderResult.rows[0];
+
+    if (!sender) {
+      return res.status(404).json({
+        success: false,
+        message: "Sender account nahi mila.",
+      });
+    }
+
+    if (!sender.is_active) {
+      return res.status(403).json({
+        success: false,
+        message: "Sender account inactive hai.",
+      });
+    }
+
+    // ── Receiver fetch ────────────────────────────────
+    const receiverResult = await pool.query(
+      "SELECT * FROM users WHERE account_number = $1",
+      [receiver_account_no]
+    );
+    const receiver = receiverResult.rows[0];
+
+    if (!receiver) {
+      return res.status(404).json({
+        success: false,
+        message: "Receiver account nahi mila.",
+      });
+    }
+
+    if (!receiver.is_active) {
+      return res.status(403).json({
+        success: false,
+        message: "Receiver account inactive hai.",
+      });
+    }
+
+    // ── Sufficient Balance Check ──────────────────────
+    if (Number(sender.balance) < Number(amount)) {
+      return res.status(400).json({
+        success: false,
+        message: `Insufficient balance. Current balance: ₹${sender.balance}`,
+      });
+    }
+
+    // ── Daily Transfer Limit Check ────────────────────
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
+    const limitResult = await pool.query(
+      `SELECT total_transferred FROM daily_transfer_limits
+       WHERE account_no = $1 AND transfer_date = $2`,
+      [sender_account_no, today]
+    );
+
+    const alreadyTransferred = limitResult.rows[0]
+      ? Number(limitResult.rows[0].total_transferred)
+      : 0;
+
+    const DAILY_LIMIT = Number(process.env.DAILY_TRANSFER_LIMIT) || 50000;
+
+    if (alreadyTransferred + Number(amount) > DAILY_LIMIT) {
+      return res.status(400).json({
+        success: false,
+        message: `Daily transfer limit ₹${DAILY_LIMIT} exceed ho jaayegi. Aaj already ₹${alreadyTransferred} transfer ho chuka hai.`,
+      });
+    }
+
+    // ── Balance Update — Dono Accounts ───────────────
+    const senderNewBalance   = Number(sender.balance)   - Number(amount);
+    const receiverNewBalance = Number(receiver.balance) + Number(amount);
+
+    await pool.query(
+      "UPDATE users SET balance = $1 WHERE account_number = $2",
+      [senderNewBalance, sender_account_no]
+    );
+
+    await pool.query(
+      "UPDATE users SET balance = $1 WHERE account_number = $2",
+      [receiverNewBalance, receiver_account_no]
+    );
+
+    // ── Transaction Record ────────────────────────────
+    await pool.query(
+      `INSERT INTO transactions
+        (sender_account_no, receiver_account_no, amount, txn_type, txn_source, status, txn_timestamp)
+       VALUES ($1, $2, $3, 'bank_transfer', 'bank', 'success', NOW())`,
+      [sender_account_no, receiver_account_no, amount]
+    );
+
+    // ── Daily Limit Update ────────────────────────────
+    if (limitResult.rows.length > 0) {
+      // Row exist karti hai — update karo
+      await pool.query(
+        `UPDATE daily_transfer_limits 
+         SET total_transferred = total_transferred + $1
+         WHERE account_no = $2 AND transfer_date = $3`,
+        [amount, sender_account_no, today]
+      );
+    } else {
+      // Nahi hai — insert karo
+      await pool.query(
+        `INSERT INTO daily_transfer_limits (account_no, transfer_date, total_transferred)
+         VALUES ($1, $2, $3)`,
+        [sender_account_no, today, amount]
+      );
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `₹${amount} successfully transfer ho gaya!`,
+      data: {
+        sender: {
+          account_number: sender_account_no,
+          full_name: sender.full_name,
+          new_balance: senderNewBalance,
+        },
+        receiver: {
+          account_number: receiver_account_no,
+          full_name: receiver.full_name,
+          new_balance: receiverNewBalance,
+        },
+        transferred_amount: Number(amount),
+      },
+    });
+
+  } catch (err) {
+    console.error("Transfer error:", err);
+    return res.status(500).json({ success: false, message: "Server error." });
+  }
+});
