@@ -7,10 +7,23 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ── Routes ─────────────────────────────────────────
+const upiAuthRoutes = require('./routes/upiAuth');
+app.use('/upi', upiAuthRoutes);
+
+// Baaki routes baad mein:
+// const transferRoutes = require('./routes/transfer');
+// app.use('/upi', transferRoutes);
+
 app.get('/', (req, res) => {
   res.json({ message: '✅ UPI Server running!' });
 });
 
-app.listen(process.env.PORT || 5001, () => {
-  console.log(`UPI server on port ${process.env.PORT || 5001}`);
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: "Route nahi mili." });
+});
+
+const PORT = process.env.PORT || 6000;
+app.listen(PORT, () => {
+  console.log(`💳 UPI Server → http://localhost:${PORT}`);
 });

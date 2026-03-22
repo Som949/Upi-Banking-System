@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../db");
 const nodemailer = require("nodemailer");
+const bcrypt = require("bcryptjs"); 
 const { verifyToken, checkDefaultPassword } = require("../middleware/authMiddleware");
 require("dotenv").config();
 
@@ -124,12 +125,15 @@ router.post("/send-otp", verifyToken, checkDefaultPassword, async (req, res) => 
       [email]
     );
 
+    // PIN hash karo pehle — plain text DB mein nahi jayega
+    const hashedPin = await bcrypt.hash(pin, 12);
+
     // Naya OTP DB mein store karo with all form data
     await pool.query(
       `INSERT INTO otp_verifications 
         (email, otp, expires_at, is_used, full_name, dob, phone_number, pin) 
        VALUES ($1, $2, $3, false, $4, $5, $6, $7)`,
-      [email, otp, expiresAt, full_name, dob, phone_number, pin]
+      [email, otp, expiresAt, full_name, dob, phone_number, hashedPin]
     );
 
     // ── OTP Email Bhejo ───────────────────────────────
