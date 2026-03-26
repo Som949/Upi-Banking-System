@@ -11,6 +11,24 @@ app.use(express.json());
 const upiAuthRoutes = require('./routes/upiAuth');
 app.use('/upi', upiAuthRoutes);
 
+const transferRoutes = require('./routes/transfer');
+app.use('/upi/transfer', transferRoutes);
+
+// balance 
+const balanceRoutes = require('./routes/balance');
+app.use('/upi/balance', balanceRoutes);
+
+// transaction history
+const transactionRoutes = require('./routes/transactions');
+app.use('/upi/transactions', transactionRoutes);
+
+// profile
+const profileRoutes = require('./routes/profile');
+app.use('/upi/profile', profileRoutes);
+
+
+
+
 // Baaki routes baad mein:
 // const transferRoutes = require('./routes/transfer');
 // app.use('/upi', transferRoutes);

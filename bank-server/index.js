@@ -16,6 +16,10 @@ app.use('/admin', adminAuthRoutes);
 const accountRoutes = require('./routes/accounts');
 app.use('/account', accountRoutes);
 
+// Searching
+const searchRoutes = require('./routes/search');
+app.use('/search', searchRoutes);
+
 app.get('/', (req, res) => {
   res.json({ message: '✅ Bank Server running!' });
 });
