@@ -4,12 +4,27 @@ const pool = require("../db");
 const bcrypt = require("bcryptjs");
 const { verifyToken } = require("../middleware/authMiddleware");
 
+
+// ── YE ADD KARO ───────────────────────────────────────────
+const calculateCashback = (amount) => {
+  const randomPercent = Math.random() * (0.6 - 0.1) + 0.1; // 0.1% to 0.6%
+  const cashback = Math.round((amount * randomPercent) / 100 * 100) / 100;
+  return {
+    cashback,
+    percentage: Math.round(randomPercent * 100) / 100,
+  };
+};
+// ─────────────────────────────────────────────────────────
+
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 🔄 POST /upi/transfer/by-account
 // Transfer by Account Number
 // Body: { sender_account_number, receiver_account_number, amount, upi_pin }
 // Headers: Authorization: Bearer <token>
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
 router.post("/by-account", verifyToken, async (req, res) => {
   try {
     const { sender_account_number, receiver_account_number, amount, upi_pin } = req.body;
@@ -140,6 +155,7 @@ router.post("/by-account", verifyToken, async (req, res) => {
     );
 
     // ── Daily Limit Update ────────────────────────────
+// ── Daily Limit Update ──────────────────────────── 
     if (limitResult.rows.length > 0) {
       await pool.query(
         `UPDATE daily_transfer_limits 
@@ -155,6 +171,26 @@ router.post("/by-account", verifyToken, async (req, res) => {
       );
     }
 
+    // ── Cashback / Reward ─────────────────────────────
+    const { cashback, percentage } = calculateCashback(Number(amount));
+
+    // Sender balance mein cashback add karo
+    await pool.query(
+      "UPDATE users SET balance = balance + $1 WHERE account_number = $2",
+      [cashback, sender_account_number]
+    );
+
+    // Rewards table mein record karo
+    await pool.query(
+      `INSERT INTO rewards (user_id, reward_amount, reason, rewarded_at)
+       VALUES ($1, $2, $3, NOW())`,
+      [
+        sender.user_id,
+        cashback,
+        `${percentage}% cashback on ₹${amount} UPI transfer`,
+      ]
+    );
+
     return res.status(200).json({
       success: true,
       message: `₹${amount} successfully transfer ho gaya!`,
@@ -162,13 +198,18 @@ router.post("/by-account", verifyToken, async (req, res) => {
         sender: {
           account_number: sender_account_number,
           full_name:      sender.full_name,
-          new_balance:    senderNewBalance,
+          new_balance:    senderNewBalance + cashback,
         },
         receiver: {
           account_number: receiver_account_number,
           full_name:      receiver.full_name,
         },
         amount: Number(amount),
+      },
+      reward: {
+        cashback_received: cashback,
+        percentage: `${percentage}%`,
+        message: `🎉 ${percentage}% cashback mila! ₹${cashback} aapke account mein add ho gaya.`,
       },
     });
 
@@ -322,7 +363,7 @@ router.post("/by-upi", verifyToken, async (req, res) => {
     );
 
     // ── Daily Limit Update ────────────────────────────
-    if (limitResult.rows.length > 0) {
+   if (limitResult.rows.length > 0) {
       await pool.query(
         `UPDATE daily_transfer_limits
          SET total_transferred = total_transferred + $1
@@ -337,6 +378,24 @@ router.post("/by-upi", verifyToken, async (req, res) => {
       );
     }
 
+    // ── Cashback / Reward ─────────────────────────────
+    const { cashback, percentage } = calculateCashback(Number(amount));
+
+    await pool.query(
+      "UPDATE users SET balance = balance + $1 WHERE account_number = $2",
+      [cashback, sender_account_number]
+    );
+
+    await pool.query(
+      `INSERT INTO rewards (user_id, reward_amount, reason, rewarded_at)
+       VALUES ($1, $2, $3, NOW())`,
+      [
+        sender.user_id,
+        cashback,
+        `${percentage}% cashback on ₹${amount} UPI transfer`,
+      ]
+    );
+
     return res.status(200).json({
       success: true,
       message: `₹${amount} successfully transfer ho gaya!`,
@@ -344,13 +403,18 @@ router.post("/by-upi", verifyToken, async (req, res) => {
         sender: {
           account_number: sender_account_number,
           full_name:      sender.full_name,
-          new_balance:    senderNewBalance,
+          new_balance:    senderNewBalance + cashback,
         },
         receiver: {
           upi_address: receiver_upi_address,
           full_name:   receiver.full_name,
         },
         amount: Number(amount),
+      },
+      reward: {
+        cashback_received: cashback,
+        percentage: `${percentage}%`,
+        message: `🎉 ${percentage}% cashback mila! ₹${cashback} aapke account mein add ho gaya.`,
       },
     });
 
