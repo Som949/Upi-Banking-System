@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 const LockIcon = () => (
 	<svg
 		viewBox="0 0 24 24"
@@ -144,20 +146,20 @@ const AdminLogin = () => {
 									>
 										Login →
 									</button>
-									<button
-										type="button"
-										className="w-full rounded-full border border-[#24375A] bg-transparent px-5 py-3 text-sm font-semibold text-[#C8D5EF] transition hover:border-[#3A5487] hover:bg-[#0B1730]"
+									<Link
+										to="/changepassword"
+										className="block w-full rounded-full border border-[#24375A] bg-transparent px-5 py-3 text-center text-sm font-semibold text-[#C8D5EF] transition hover:border-[#3A5487] hover:bg-[#0B1730]"
 									>
 										Change Password
-									</button>
+									</Link>
 								</div>
 							</form>
 
 							<p className="mt-10 text-center text-sm text-[#93A5C8]">
 								System issues?{' '}
-								<a href="#" className="font-medium text-[#7CA5FF] hover:text-[#9FBEFF]">
+								<Link to="/changepassword" className="font-medium text-[#7CA5FF] hover:text-[#9FBEFF]">
 									Contact Support
-								</a>
+								</Link>
 							</p>
 						</div>
 
