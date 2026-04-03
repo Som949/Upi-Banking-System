@@ -12,7 +12,7 @@ const SignUp = () => {
 					  <div className="flex flex-col justify-between bg-linear-to-br from-[#1F2937] to-[#111827] p-8 sm:p-10 lg:p-12">
 						<div>
 							<p className="inline-flex items-center rounded-full border border-[#374151] bg-[#0F172A]/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#9CA3AF]">
-								Fintech Access
+								Hello!
 							</p>
 							<h1 className="mt-6 text-3xl font-bold leading-tight text-[#FFFFFF] sm:text-4xl">
 								Create your
@@ -29,18 +29,18 @@ const SignUp = () => {
 						<div className="mt-8 grid gap-4 sm:grid-cols-3">
 							<article className="rounded-2xl border border-[#374151] bg-[#1F2937]/80 p-4">
 								<p className="text-xs uppercase tracking-wide text-[#9CA3AF]">
-									Security
+									Fast & secure
 								</p>
 								<p className="mt-2 text-sm font-semibold text-[#FFFFFF]">
-									256-bit encrypted
+									Bank-level security
 								</p>
 							</article>
 							<article className="rounded-2xl border border-[#374151] bg-[#1F2937]/80 p-4">
 								<p className="text-xs uppercase tracking-wide text-[#9CA3AF]">
-									KYC
+									Realtime tracking
 								</p>
 								<p className="mt-2 text-sm font-semibold text-[#FFFFFF]">
-									Fast verification
+									Stay on top of your finances
 								</p>
 							</article>
 							<article className="rounded-2xl border border-[#374151] bg-[#1F2937]/80 p-4">

@@ -1,7 +1,7 @@
-import SignUp from "./Pages/signUp";
+import AdminLogin from './Pages/Bank/AdminLogin'
 
 function App() {
-  return <SignUp />;
+  return <AdminLogin />
 }
 
-export default App;
+export default App
