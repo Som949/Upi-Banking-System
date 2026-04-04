@@ -5,6 +5,8 @@ import AdminHomePage from './Pages/Bank/AdminHomePage'
 import AccountCreation from './Pages/Bank/AccountCreation'
 import OTPverification from './Pages/Bank/OTPverification'
 import AccountFinalized from './Pages/Bank/accountFinalized'
+import SearchCustomer from './Pages/Bank/SearchCustomer'
+import DepositMoney from './Pages/Bank/DepositMoney'
 
 function App() {
   return (
@@ -14,9 +16,11 @@ function App() {
         <Route path="/login" element={<AdminLogin />} />
         <Route path="/adminDashboard" element={<AdminHomePage />} />
         <Route path="/accounts/create" element={<AccountCreation />} />
+        <Route path="/customers/search" element={<SearchCustomer />} />
         <Route path="/accounts/verification" element={<OTPverification />} />
         <Route path="/accounts/finalized" element={<AccountFinalized />} />
         <Route path="/changepassword" element={<ChangePassword />} />
+        <Route path="/transactions/deposit" element={<DepositMoney />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
