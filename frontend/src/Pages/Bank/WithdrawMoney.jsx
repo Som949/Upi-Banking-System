@@ -73,7 +73,7 @@ export default function WithdrawMoney() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-b from-[#0a1428] to-[#050b18] text-slate-200">
+		<div className="min-h-screen bg-linear-to-b from-[#0a1428] to-[#050b18] text-slate-200">
 			<div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
 				{/* Header */}
 				<div className="mb-8 flex items-center gap-3">
@@ -105,7 +105,7 @@ export default function WithdrawMoney() {
 				</div>
 
 				{/* Main Content Card */}
-				<div className="rounded-2xl border border-slate-700/50 bg-gradient-to-br from-slate-900/70 to-slate-950/70 p-8 backdrop-blur-sm">
+				<div className="rounded-2xl border border-slate-700/50 bg-linear-to-br from-slate-900/70 to-slate-950/70 p-8 backdrop-blur-sm">
 					<div className="mb-8 flex items-center gap-4">
 						<div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/20">
 							<svg className="h-6 w-6 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
@@ -195,7 +195,7 @@ export default function WithdrawMoney() {
 						{/* Error Message */}
 						{(hasError || exceedsDailyLimit || error) && (
 							<div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 flex items-start gap-3">
-								<svg className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
+								<svg className="h-5 w-5 text-red-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
 									<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
 								</svg>
 								<div className="flex-1">
@@ -213,7 +213,7 @@ export default function WithdrawMoney() {
 						<button
 							type="submit"
 							disabled={isLoading || !withdrawData.withdrawAmount || hasError || exceedsDailyLimit}
-							className="w-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 py-3 text-lg font-semibold text-white transition hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+							className="w-full rounded-full bg-linear-to-r from-blue-500 to-blue-600 py-3 text-lg font-semibold text-white transition hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
 						>
 							<svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
 								<path d="M12 5v14m7-7H5" strokeWidth="2" strokeLinecap="round" />

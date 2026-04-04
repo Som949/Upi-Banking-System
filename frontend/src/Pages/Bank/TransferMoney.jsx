@@ -88,7 +88,7 @@ export default function TransferMoney() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-b from-[#0a1428] to-[#050b18] text-slate-200">
+		<div className="min-h-screen bg-linear-to-b from-[#0a1428] to-[#050b18] text-slate-200">
 			<div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
 				{/* Header */}
 				<div className="mb-8 flex items-center gap-3">
@@ -123,7 +123,7 @@ export default function TransferMoney() {
 				</div>
 
 				{/* Main Content Card */}
-				<div className="rounded-2xl border border-slate-700/50 bg-gradient-to-br from-slate-900/70 to-slate-950/70 p-8 backdrop-blur-sm">
+				<div className="rounded-2xl border border-slate-700/50 bg-linear-to-br from-slate-900/70 to-slate-950/70 p-8 backdrop-blur-sm">
 					<div className="mb-8">
 						<h2 className="text-2xl font-bold text-slate-100 mb-6">Transfer Money</h2>
 					</div>
@@ -154,7 +154,7 @@ export default function TransferMoney() {
 
 						{/* Transfer Arrow */}
 						<div className="flex justify-center py-4">
-							<div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-purple-500/30 to-purple-600/30 border border-purple-500/50">
+							<div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-r from-purple-500/30 to-purple-600/30 border border-purple-500/50">
 								<ArrowDown className="h-6 w-6 text-purple-300" />
 							</div>
 						</div>
@@ -223,7 +223,7 @@ export default function TransferMoney() {
 						{/* Error Message */}
 						{(hasError || exceedsDailyLimit || error) && (
 							<div className="rounded-lg border border-red-400/30 bg-red-400/10 px-4 py-3 flex items-start gap-3">
-								<svg className="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
+								<svg className="h-5 w-5 text-red-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
 									<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
 								</svg>
 								<div className="flex-1">
@@ -241,7 +241,7 @@ export default function TransferMoney() {
 						<button
 							type="submit"
 							disabled={isLoading || invalidReceiver || !transferData.transferAmount || hasError || exceedsDailyLimit}
-							className="w-full rounded-full bg-gradient-to-r from-purple-500 to-purple-600 py-3 text-lg font-semibold text-white transition hover:from-purple-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+							className="w-full rounded-full bg-linear-to-r from-purple-500 to-purple-600 py-3 text-lg font-semibold text-white transition hover:from-purple-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
 						>
 							<svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
 								<path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
@@ -257,7 +257,7 @@ export default function TransferMoney() {
 						{/* Success Message */}
 						{successMessage && (
 							<div className="rounded-lg border border-emerald-400/30 bg-emerald-400/15 px-4 py-3 flex items-start gap-3">
-								<svg className="h-5 w-5 text-emerald-400 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
+								<svg className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="currentColor">
 									<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
 								</svg>
 								<div className="flex-1">
