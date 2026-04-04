@@ -314,11 +314,11 @@ function AccountCreation({ workflowSource, initialWorkflow, onSubmitDetails }) {
 						</p>
 					</form>
 
-					  <div className="mx-auto mt-9 flex w-full max-w-140 flex-wrap items-center justify-center gap-8 text-[10px] uppercase tracking-[0.18em] text-slate-500">
+					{/* <div className="mx-auto mt-9 flex w-full max-w-140 flex-wrap items-center justify-center gap-8 text-[10px] uppercase tracking-[0.18em] text-slate-500">
 						<span>AES-256 Encrypted</span>
 						<span>Sovereign Protection</span>
 						<span>Federal Compliant</span>
-					</div>
+					</div> */}
 				</main>
 			</div>
 		</div>
