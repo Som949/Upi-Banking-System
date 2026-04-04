@@ -7,6 +7,7 @@ import OTPverification from './Pages/Bank/OTPverification'
 import AccountFinalized from './Pages/Bank/accountFinalized'
 import SearchCustomer from './Pages/Bank/SearchCustomer'
 import DepositMoney from './Pages/Bank/DepositMoney'
+import WithdrawMoney from './Pages/Bank/WithdrawMoney'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/accounts/finalized" element={<AccountFinalized />} />
         <Route path="/changepassword" element={<ChangePassword />} />
         <Route path="/transactions/deposit" element={<DepositMoney />} />
+        <Route path="/transactions/withdraw" element={<WithdrawMoney />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
