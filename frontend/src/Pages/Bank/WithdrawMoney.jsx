@@ -222,10 +222,10 @@ export default function WithdrawMoney() {
 						</button>
 
 						{/* Security Info */}
-						<p className="text-center text-xs text-slate-500 flex items-center justify-center gap-2">
+						{/* <p className="text-center text-xs text-slate-500 flex items-center justify-center gap-2">
 							<span className="h-2 w-2 rounded-full bg-emerald-400" />
 							END-TO-END ENCRYPTED SESSION
-						</p>
+						</p> */}
 
 						{/* Success Message */}
 						{successMessage && (
