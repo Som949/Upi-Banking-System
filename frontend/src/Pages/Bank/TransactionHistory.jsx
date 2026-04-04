@@ -114,7 +114,7 @@ export default function TransactionHistory() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gradient-to-b from-[#0a1428] to-[#050b18] text-slate-200">
+		<div className="min-h-screen bg-linear-to-b from-[#0a1428] to-[#050b18] text-slate-200">
 			<div className="min-h-screen flex flex-col overflow-hidden">
 				{/* Main Content */}
 				<div className="flex-1 flex flex-col overflow-hidden">
