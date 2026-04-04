@@ -9,7 +9,7 @@ import SearchCustomer from './Pages/Bank/SearchCustomer'
 import DepositMoney from './Pages/Bank/DepositMoney'
 import WithdrawMoney from './Pages/Bank/WithdrawMoney'
 import TransferMoney from './Pages/Bank/TransferMoney'
-
+import TransactionHistory from './Pages/Bank/TransactionHistory'
 function App() {
   return (
     <BrowserRouter>
@@ -25,7 +25,8 @@ function App() {
         <Route path="/transactions/deposit" element={<DepositMoney />} />
         <Route path="/transactions/withdraw" element={<WithdrawMoney />} />
         <Route path="/transactions/transfer" element={<TransferMoney />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="/transactions/history" element={<TransactionHistory />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   )

@@ -271,7 +271,7 @@ function AdminHomePage({
 						<div className="flex items-center justify-between gap-4">
 							<div className="flex items-center gap-6">
 								<h1 className="hidden text-2xl font-semibold tracking-[0.12em] text-slate-100 md:block">ADMIN PORTAL</h1>
-								<nav className="flex items-center gap-1 rounded-xl bg-slate-900/40 p-1">
+								{/* <nav className="flex items-center gap-1 rounded-xl bg-slate-900/40 p-1">
 									{dashboardData.topNav.map((tab) => (
 										<NavLink
 											key={tab.id}
@@ -288,7 +288,7 @@ function AdminHomePage({
 											{tab.label}
 										</NavLink>
 									))}
-								</nav>
+								</nav> */}
 							</div>
 
 							<div className="flex items-center gap-2">
