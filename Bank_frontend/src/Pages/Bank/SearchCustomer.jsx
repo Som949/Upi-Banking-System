@@ -558,7 +558,7 @@ function SearchCustomer() {
 										<p className="text-xs uppercase tracking-[0.16em] text-slate-500">Account Number</p>
 										<p className="mt-1 text-3xl text-blue-300">{selectedCustomer.accountNumber}</p>
 										<p className="mt-6 text-xs uppercase tracking-[0.16em] text-slate-500">Current Balance</p>
-										<p className="mt-1 text-6xl font-semibold text-emerald-300">Rs. {formatCurrency(selectedCustomer.balance)}</p>
+										<p className="mt-1 text-2xl font-semibold text-emerald-300">Rs. {formatCurrency(selectedCustomer.balance)}</p>
 										<div className="mt-6 rounded-lg border border-slate-700 bg-slate-900/35 p-3">
 											<p className="text-xs uppercase tracking-[0.14em] text-slate-500">Last Activity</p>
 											<p className="mt-1 text-sm text-slate-200">{selectedCustomer.lastActivity}</p>
