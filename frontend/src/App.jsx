@@ -11,7 +11,7 @@ import WithdrawMoney from './Pages/Bank/WithdrawMoney'
 import TransferMoney from './Pages/Bank/TransferMoney'
 import TransactionHistory from './Pages/Bank/TransactionHistory'
 
-import UPIHome from './Pages/UPI/UPIHome'
+import VaultLogin from './Pages/UPI/UPIHome'
 import UPILogin from './Pages/UPI/UPILogin'
 import UPIRegister from './Pages/UPI/UPIRegister'
 import UPISetPin from './Pages/UPI/UPISetPin'
@@ -29,6 +29,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Bank routes */}
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<AdminLogin />} />
         <Route path="/adminDashboard" element={<AdminHomePage />} />
@@ -40,9 +41,10 @@ function App() {
         <Route path="/transactions/deposit" element={<DepositMoney />} />
         <Route path="/transactions/withdraw" element={<WithdrawMoney />} />
         <Route path="/transactions/transfer" element={<TransferMoney />} />
-          <Route path="/transactions/history" element={<TransactionHistory />} />
+        <Route path="/transactions/history" element={<TransactionHistory />} />
 
-        <Route path="/upi" element={<UPIHome />} />
+
+        <Route path="/upi" element={<VaultLogin />} />
         <Route path="/upi/login" element={<UPILogin />} />
         <Route path="/upi/register" element={<UPIRegister />} />
         <Route path="/upi/set-pin" element={<UPISetPin />} />
