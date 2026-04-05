@@ -20,6 +20,7 @@ import UPISendMoney from './Pages/UPI/UPISendMoney'
 import UPITransConfirm from './Pages/UPI/UPITransConfirm'
 import UPIConfirmation from './Pages/UPI/UPIConfirmation'
 import UPICheckBalance from './Pages/UPI/UPICheckBalance'
+import UPICheckBalanceResult from './Pages/UPI/UPICheckBalanceResult'
 import UPITransactionHistory from './Pages/UPI/UPITransactionHistory'
 import UPIRewards from './Pages/UPI/UPIRewards'
 import UPIProfile from './Pages/UPI/UPIProfile'
@@ -50,6 +51,7 @@ function App() {
         <Route path="/upi/pin" element={<UPITransConfirm />} />
         <Route path="/upi/confirm" element={<UPIConfirmation />} />
         <Route path="/upi/check-balance" element={<UPICheckBalance />} />
+        <Route path="/upi/check-balance-result" element={<UPICheckBalanceResult />} />
         <Route path="/upi/transactions" element={<UPITransactionHistory />} />
         <Route path="/upi/rewards" element={<UPIRewards />} />
         <Route path="/upi/profile" element={<UPIProfile />} />
