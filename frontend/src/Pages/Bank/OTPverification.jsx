@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { createAccount } from '../../api'
 
 const DEFAULT_OTP_FLOW = {
 	topTitle: 'Create Account',
@@ -32,7 +33,9 @@ function OTPverification({ flowSource, initialFlow, onVerifyOtp, onResendOtp }) 
 	const [flow, setFlow] = useState(() => mergeOtpFlow(DEFAULT_OTP_FLOW, initialFlow))
 	const [otp, setOtp] = useState(() => Array(mergeOtpFlow(DEFAULT_OTP_FLOW, initialFlow).otpLength).fill(''))
 	const [secondsLeft, setSecondsLeft] = useState(() => mergeOtpFlow(DEFAULT_OTP_FLOW, initialFlow).resendSeconds)
-	const inputRefs = useRef([])
+	const [otpError, setOtpError]       = useState('')
+    const [isVerifying, setIsVerifying] = useState(false)
+	const inputRefs = useRef([]) 
 
 	useEffect(() => {
 		const emailFromState = location.state?.email
@@ -136,29 +139,60 @@ function OTPverification({ flowSource, initialFlow, onVerifyOtp, onResendOtp }) 
 		inputRefs.current[focusIndex]?.focus()
 	}
 
-	const handleVerify = async () => {
-		if (!canSubmit) {
-			return
-		}
+	// const handleVerify = async () => {
+	// 	if (!canSubmit) {
+	// 		return
+	// 	}
 
-		if (!onVerifyOtp) {
-			navigate('/accounts/finalized', {
-				state: {
-					isAccountCreated: true,
-					email: flow.recipientEmail,
-				},
-			})
-			return
-		}
+	// 	if (!onVerifyOtp) {
+	// 		navigate('/accounts/finalized', {
+	// 			state: {
+	// 				isAccountCreated: true,
+	// 				email: flow.recipientEmail,
+	// 			},
+	// 		})
+	// 		return
+	// 	}
 
-		const result = await onVerifyOtp(otp.join(''), flow)
-		navigate('/accounts/finalized', {
-			state: {
-				isAccountCreated: Boolean(result?.isAccountCreated ?? result ?? false),
-				email: flow.recipientEmail,
-			},
-		})
-	}
+	// 	const result = await onVerifyOtp(otp.join(''), flow)
+	// 	navigate('/accounts/finalized', {
+	// 		state: {
+	// 			isAccountCreated: Boolean(result?.isAccountCreated ?? result ?? false),
+	// 			email: flow.recipientEmail,
+	// 		},
+	// 	})
+	// }
+	// ✅ UPDATED: API se connected
+const handleVerify = async () => {
+    if (!canSubmit) return
+
+    setIsVerifying(true)  // ✅ loading state
+    try {
+        const res = await createAccount({
+            email: flow.recipientEmail,
+            otp:   otp.join(''),
+        })
+
+        if (res.success) {
+            navigate('/accounts/finalized', {
+                state: {
+                    isAccountCreated: true,
+                    email:          res.data.email,
+                    name:           res.data.full_name,
+                    userId:         res.data.user_id,
+                    accountNumber:  res.data.account_number,
+                    phone:          res.data.phone_number,
+                },
+            })
+        } else {
+            setOtpError(res.message || 'Wrong OTP!')
+        }
+    } catch {
+        setOtpError('Not Connected with server')
+    } finally {
+        setIsVerifying(false)
+    }
+}
 
 	const handleResend = async () => {
 		if (secondsLeft > 0) {
@@ -248,15 +282,28 @@ function OTPverification({ flowSource, initialFlow, onVerifyOtp, onResendOtp }) 
 								/>
 							))}
 						</div>
+						{otpError && (
+    <p className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-center text-sm text-red-400">
+        {otpError}
+    </p>
+)}
 
-						<button
+						{/* <button
 							type="button"
 							onClick={handleVerify}
 							disabled={!canSubmit}
 							className="mt-8 h-14 w-full rounded-full bg-linear-to-r from-emerald-500 to-emerald-600 text-base font-semibold text-emerald-50 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
 						>
 							  Verify & Create Account -&gt;
-						</button>
+						</button> */}
+						<button
+                            type="button"
+                            onClick={handleVerify}
+                            disabled={!canSubmit || isVerifying}
+                            className="mt-8 h-14 w-full rounded-full bg-linear-to-r from-emerald-500 to-emerald-600 text-base font-semibold text-emerald-50 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {isVerifying ? 'Verifying...' : 'Verify & Create Account →'}
+                        </button> 
 
 						<div className="mt-7 flex items-center justify-center gap-2 text-sm text-slate-400">
 							<span>Didn't receive OTP?</span>

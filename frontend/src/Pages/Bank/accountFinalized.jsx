@@ -2,22 +2,41 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Toaster, toast } from 'react-hot-toast'
 
+
+// const DEFAULT_FINAL_DATA = {
+// 	title: 'Account Created Successfully!',
+// 	subtitle: 'Welcome to the future of digital banking. Your secure vault is ready.',
+// 	securityBadge: 'Encrypted and verified',
+// 	steps: [
+// 		{ id: 'step-1', label: 'Step 1', status: 'completed' },
+// 		{ id: 'step-2', label: 'Step 2', status: 'completed' },
+// 		{ id: 'step-3', label: 'Step 3', status: 'completed' },
+// 	],
+// 	customer: {
+// 		name: 'Rahul Sharma',
+// 		userId: 'USR790837',
+// 		accountNumber: '5753246179',
+// 		phone: '9876543210',
+// 		email: 'rahul@gmail.com',
+// 	},
+// }
+// Yeh add karo comment ke baad:
 const DEFAULT_FINAL_DATA = {
-	title: 'Account Created Successfully!',
-	subtitle: 'Welcome to the future of digital banking. Your secure vault is ready.',
-	securityBadge: 'Encrypted and verified',
-	steps: [
-		{ id: 'step-1', label: 'Step 1', status: 'completed' },
-		{ id: 'step-2', label: 'Step 2', status: 'completed' },
-		{ id: 'step-3', label: 'Step 3', status: 'completed' },
-	],
-	customer: {
-		name: 'Rahul Sharma',
-		userId: 'USR790837',
-		accountNumber: '5753246179',
-		phone: '9876543210',
-		email: 'rahul@gmail.com',
-	},
+    title: 'Account Created Successfully!',
+    subtitle: 'Welcome to the future of digital banking. Your secure vault is ready.',
+    securityBadge: 'Encrypted and verified',
+    steps: [
+        { id: 'step-1', label: 'Step 1', status: 'completed' },
+        { id: 'step-2', label: 'Step 2', status: 'completed' },
+        { id: 'step-3', label: 'Step 3', status: 'completed' },
+    ],
+    customer: {
+        name: '',
+        userId: '',
+        accountNumber: '',
+        phone: '',
+        email: '',
+    },
 }
 
 const mergeFinalData = (base, incoming) => {
@@ -88,6 +107,21 @@ function AccountFinalized({ finalDataSource, initialFinalData }) {
 			}
 		}
 	}, [finalDataSource])
+
+useEffect(() => {
+    if (location.state?.name) {
+        setFinalData((prev) => ({
+            ...prev,
+            customer: {
+                name:          location.state.name,
+                userId:        location.state.userId,
+                accountNumber: location.state.accountNumber,
+                phone:         location.state.phone,
+                email:         location.state.email,
+            },
+        }))
+    }
+}, [location.state])
 
 	useEffect(() => {
 		if (isAccountCreated) {

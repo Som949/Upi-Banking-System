@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+
 
 const iconStyles = 'h-5 w-5'
 
@@ -9,11 +11,11 @@ const Icons = {
 			<path d="M4 13h7V4H4v9Zm0 7h7v-5H4v5Zm9 0h7v-9h-7v9Zm0-16v5h7V4h-7Z" fill="currentColor" />
 		</svg>
 	),
-	users: ({ className = iconStyles }) => (
-		<svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-			<path d="M16 11c1.66 0 2.99-1.57 2.99-3.5S17.66 4 16 4s-3 1.57-3 3.5 1.34 3.5 3 3.5Zm-8 0c1.66 0 2.99-1.57 2.99-3.5S9.66 4 8 4 5 5.57 5 7.5 6.34 11 8 11Zm0 2c-2.33 0-7 1.17-7 3.5V20h14v-3.5C15 14.17 10.33 13 8 13Zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.95 1.97 3.45V20h6v-3.5c0-2.33-4.67-3.5-7-3.5Z" fill="currentColor" />
-		</svg>
-	),
+	// users: ({ className = iconStyles }) => (
+	// 	<svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+	// 		<path d="M16 11c1.66 0 2.99-1.57 2.99-3.5S17.66 4 16 4s-3 1.57-3 3.5 1.34 3.5 3 3.5Zm-8 0c1.66 0 2.99-1.57 2.99-3.5S9.66 4 8 4 5 5.57 5 7.5 6.34 11 8 11Zm0 2c-2.33 0-7 1.17-7 3.5V20h14v-3.5C15 14.17 10.33 13 8 13Zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.95 1.97 3.45V20h6v-3.5c0-2.33-4.67-3.5-7-3.5Z" fill="currentColor" />
+	// 	</svg>
+	// ),
 	search: ({ className = iconStyles }) => (
 		<svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
 			<path d="m21 21-4.3-4.3m1.8-4.95a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -58,7 +60,7 @@ const Icons = {
 
 const DEFAULT_DASHBOARD_CONFIG = {
 	brand: {
-		title: 'BOI Admin',
+		title: 'SBI Bank',
 		subtitle: 'Secure Terminal',
 		homeRoute: '/adminDashboard',
 	},
@@ -69,7 +71,7 @@ const DEFAULT_DASHBOARD_CONFIG = {
 	],
 	sidebar: [
 		{ id: 'dashboard', label: 'Dashboard', icon: 'dashboard', route: '/adminDashboard' },
-		{ id: 'accounts', label: 'Accounts', icon: 'users', route: '/accounts' },
+		// { id: 'accounts', label: 'Accounts', icon: 'users', route: '/accounts' },
 		{ id: 'search', label: 'Search', icon: 'search', route: '/customers/search' },
 		{ id: 'deposit', label: 'Deposit', icon: 'deposit', route: '/transactions/deposit' },
 		{ id: 'withdraw', label: 'Withdraw', icon: 'withdraw', route: '/transactions/withdraw' },
@@ -165,9 +167,30 @@ const formatToday = (date = new Date()) =>
 function AdminHomePage({
 	dataSource,
 	initialData,
-	currentUser = { initials: 'AD', name: 'Admin' },
+	// currentUser = { initials: 'AD', name: 'Admin' },
+	// ✅ UPDATED: currentUser localStorage se lo
+	currentUser = {
+		initials: 'AD',
+		name: localStorage.getItem('admin_name') || 'Admin',
+	},
 	onLogout,
 }) {
+	const navigate = useNavigate() // ✅ ADDED
+	// ✅ ADDED: auth check — token nahi hai toh login pe bhejo
+	useEffect(() => {
+		const token = localStorage.getItem('bank_token')
+		if (!token) {
+			navigate('/login')
+		}
+	}, [navigate])
+
+	// ✅ ADDED: logout handler
+	const handleLogout = () => {
+		localStorage.removeItem('bank_token')
+		localStorage.removeItem('is_default_password')
+		navigate('/login')
+	}
+
 	const [dashboardData, setDashboardData] = useState(() =>
 		mergeDashboardData(DEFAULT_DASHBOARD_CONFIG, initialData),
 	)
@@ -303,7 +326,7 @@ function AdminHomePage({
 								</Link>
 								<button
 									type="button"
-									onClick={onLogout}
+									onClick={handleLogout}
 									className="rounded-full bg-blue-500/85 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-blue-500"
 								>
 									Logout

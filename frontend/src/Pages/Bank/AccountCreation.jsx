@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { sendOtp } from '../../api'
 
 const DEFAULT_WORKFLOW = {
 	headerTitle: 'The Vaulted Sanctuary',
@@ -69,6 +70,8 @@ function AccountCreation({ workflowSource, initialWorkflow, onSubmitDetails }) {
 	const navigate = useNavigate()
 	const [workflow, setWorkflow] = useState(() => mergeWorkflow(DEFAULT_WORKFLOW, initialWorkflow))
 	const [formData, setFormData] = useState(() => mergeWorkflow(DEFAULT_WORKFLOW, initialWorkflow).form)
+	const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false) 
 
 	useEffect(() => {
 		let disposed = false
@@ -123,15 +126,43 @@ function AccountCreation({ workflowSource, initialWorkflow, onSubmitDetails }) {
 		setFormData((prev) => ({ ...prev, [field]: value }))
 	}
 
-	const handleSubmit = async (event) => {
-		event.preventDefault()
-		if (!onSubmitDetails) {
-			navigate('/accounts/verification', { state: { email: formData.emailAddress } })
-			return
-		}
+	// const handleSubmit = async (event) => {
+	// 	event.preventDefault()
+	// 	if (!onSubmitDetails) {
+	// 		navigate('/accounts/verification', { state: { email: formData.emailAddress } })
+	// 		return
+	// 	}
 
-		await onSubmitDetails(formData, workflow)
-	}
+	// 	await onSubmitDetails(formData, workflow)
+	// }
+	// ✅ UPDATED: API se connected
+const handleSubmit = async (event) => {
+    event.preventDefault()
+    setError('')      
+    setLoading(true)  
+
+    try {
+        const res = await sendOtp({
+            full_name:    formData.fullName,
+            dob:          formData.dateOfBirth,
+            phone_number: formData.phoneNumber,
+            email:        formData.emailAddress,
+            pin:          formData.pin,
+        })
+
+        if (res.success) {
+            navigate('/accounts/verification', {
+                state: { email: formData.emailAddress },
+            })
+        } else {
+            setError(res.message || 'Error in sending OTP')
+        }
+    } catch {
+        setError('Problem in connection with server')
+    } finally {
+        setLoading(false)
+    }
+}
 
 	const getBadgeClasses = (status) => {
 		if (status === 'completed') {
@@ -304,9 +335,12 @@ function AccountCreation({ workflowSource, initialWorkflow, onSubmitDetails }) {
 
 						<button
 							type="submit"
+							disabled={loading}
 							className="mt-8 h-12 w-full rounded-full bg-linear-to-r from-[#7ea3ff] to-[#3f74ff] text-sm font-medium text-slate-950 transition hover:brightness-110"
 						>
-							Send OTP to Email
+							/* Send OTP to Email */
+							
+							{loading ? 'Sending OTP...' : 'Send OTP to Email'}
 						</button>
 
 						<p className="mt-7 border-t border-slate-800 pt-5 text-center text-xs text-slate-500">
