@@ -10,6 +10,20 @@ import DepositMoney from './Pages/Bank/DepositMoney'
 import WithdrawMoney from './Pages/Bank/WithdrawMoney'
 import TransferMoney from './Pages/Bank/TransferMoney'
 import TransactionHistory from './Pages/Bank/TransactionHistory'
+
+import UPIHome from './Pages/UPI/UPIHome'
+import UPILogin from './Pages/UPI/UPILogin'
+import UPIRegister from './Pages/UPI/UPIRegister'
+import UPISetPin from './Pages/UPI/UPISetPin'
+import UPIDashboard from './Pages/UPI/UPIDashboard'
+import UPISendMoney from './Pages/UPI/UPISendMoney'
+import UPITransConfirm from './Pages/UPI/UPITransConfirm'
+import UPIConfirmation from './Pages/UPI/UPIConfirmation'
+import UPICheckBalance from './Pages/UPI/UPICheckBalance'
+import UPITransactionHistory from './Pages/UPI/UPITransactionHistory'
+import UPIRewards from './Pages/UPI/UPIRewards'
+import UPIProfile from './Pages/UPI/UPIProfile'
+
 function App() {
   return (
     <BrowserRouter>
@@ -26,7 +40,21 @@ function App() {
         <Route path="/transactions/withdraw" element={<WithdrawMoney />} />
         <Route path="/transactions/transfer" element={<TransferMoney />} />
           <Route path="/transactions/history" element={<TransactionHistory />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
+
+        <Route path="/upi" element={<UPIHome />} />
+        <Route path="/upi/login" element={<UPILogin />} />
+        <Route path="/upi/register" element={<UPIRegister />} />
+        <Route path="/upi/set-pin" element={<UPISetPin />} />
+        <Route path="/upi/dashboard" element={<UPIDashboard />} />
+        <Route path="/upi/send-money" element={<UPISendMoney />} />
+        <Route path="/upi/pin" element={<UPITransConfirm />} />
+        <Route path="/upi/confirm" element={<UPIConfirmation />} />
+        <Route path="/upi/check-balance" element={<UPICheckBalance />} />
+        <Route path="/upi/transactions" element={<UPITransactionHistory />} />
+        <Route path="/upi/rewards" element={<UPIRewards />} />
+        <Route path="/upi/profile" element={<UPIProfile />} />
+
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   )
