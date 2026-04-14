@@ -33,21 +33,21 @@ router.post("/by-account", verifyToken, async (req, res) => {
     if (!sender_account_number || !receiver_account_number || !amount || !upi_pin) {
       return res.status(400).json({
         success: false,
-        message: "Sab fields zaroori hain.",
+        message: "All fields are required.",
       });
     }
 
     if (sender_account_number === receiver_account_number) {
       return res.status(400).json({
         success: false,
-        message: "Sender aur receiver same nahi ho sakta.",
+        message: "The sender and receiver cannot be the same.",
       });
     }
 
     if (isNaN(amount) || Number(amount) <= 0) {
       return res.status(400).json({
         success: false,
-        message: "Amount valid aur 0 se zyada hona chahiye.",
+        message: "The amount must be valid and greater than zero.",
       });
     }
 
@@ -62,7 +62,7 @@ router.post("/by-account", verifyToken, async (req, res) => {
     if (!upiAccount) {
       return res.status(404).json({
         success: false,
-        message: "Sender ka UPI account nahi mila.",
+        message: "The sender's UPI account was not found.",
       });
     }
 
@@ -70,7 +70,7 @@ router.post("/by-account", verifyToken, async (req, res) => {
     if (!isPinValid) {
       return res.status(401).json({
         success: false,
-        message: "Galat UPI PIN.",
+        message: "wrong UPI PIN.",
       });
     }
 
@@ -84,7 +84,7 @@ router.post("/by-account", verifyToken, async (req, res) => {
     if (!sender) {
       return res.status(404).json({
         success: false,
-        message: "Sender account nahi mila.",
+        message: "Sender account not found.",
       });
     }
 
@@ -98,7 +98,7 @@ router.post("/by-account", verifyToken, async (req, res) => {
     if (!receiver) {
       return res.status(404).json({
         success: false,
-        message: "Receiver account nahi mila.",
+        message: "Receiver account not found.",
       });
     }
 
@@ -128,7 +128,7 @@ router.post("/by-account", verifyToken, async (req, res) => {
     if (alreadyTransferred + Number(amount) > DAILY_LIMIT) {
       return res.status(400).json({
         success: false,
-        message: `Daily limit ₹${DAILY_LIMIT} exceed ho jaayegi. Aaj already ₹${alreadyTransferred} transfer ho chuka hai.`,
+        message: `The daily limit of ₹${DAILY_LIMIT} will be exceeded.. Aaj already ₹${alreadyTransferred} has already been transferred today.`,
       });
     }
 
@@ -193,7 +193,7 @@ router.post("/by-account", verifyToken, async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `₹${amount} successfully transfer ho gaya!`,
+      message: `₹${amount} successfully transfer!`,
       data: {
         sender: {
           account_number: sender_account_number,
@@ -209,7 +209,7 @@ router.post("/by-account", verifyToken, async (req, res) => {
       reward: {
         cashback_received: cashback,
         percentage: `${percentage}%`,
-        message: `🎉 ${percentage}% cashback mila! ₹${cashback} aapke account mein add ho gaya.`,
+        message: ` You have received ${percentage}% cashback! ₹${cashback}  has been credited to your account.`,
       },
     });
 
@@ -233,7 +233,7 @@ router.post("/by-upi", verifyToken, async (req, res) => {
     if (!sender_account_number || !receiver_upi_address || !amount || !upi_pin) {
       return res.status(400).json({
         success: false,
-        message: "Sab fields zaroori hain.",
+        message: "All fields are required.",
       });
     }
 
@@ -255,7 +255,7 @@ router.post("/by-upi", verifyToken, async (req, res) => {
     if (!senderUpi) {
       return res.status(404).json({
         success: false,
-        message: "Sender ka UPI account nahi mila.",
+        message: "The sender’s UPI account was not found.",
       });
     }
 
@@ -263,7 +263,7 @@ router.post("/by-upi", verifyToken, async (req, res) => {
     if (!isPinValid) {
       return res.status(401).json({
         success: false,
-        message: "Galat UPI PIN.",
+        message: "wrong UPI PIN.",
       });
     }
 
@@ -278,7 +278,7 @@ router.post("/by-upi", verifyToken, async (req, res) => {
     if (!receiverUpi) {
       return res.status(404).json({
         success: false,
-        message: "Receiver ka UPI address nahi mila.",
+        message: "The receiver’s UPI address was not found.",
       });
     }
 
@@ -286,7 +286,7 @@ router.post("/by-upi", verifyToken, async (req, res) => {
     if (sender_account_number === receiverUpi.account_number) {
       return res.status(400).json({
         success: false,
-        message: "Apne aap ko transfer nahi kar sakte.",
+        message: "You cannot transfer money to yourself.",
       });
     }
 
@@ -306,7 +306,7 @@ router.post("/by-upi", verifyToken, async (req, res) => {
     if (!sender || !receiver) {
       return res.status(404).json({
         success: false,
-        message: "Sender ya receiver account nahi mila.",
+        message: "The sender or receiver account was not found.",
       });
     }
 
@@ -336,7 +336,7 @@ router.post("/by-upi", verifyToken, async (req, res) => {
     if (alreadyTransferred + Number(amount) > DAILY_LIMIT) {
       return res.status(400).json({
         success: false,
-        message: `Daily limit ₹${DAILY_LIMIT} exceed ho jaayegi. Aaj already ₹${alreadyTransferred} transfer ho chuka hai.`,
+        message: `The daily limit of ₹${DAILY_LIMIT} will be exceeded. ₹${alreadyTransferred} has already been transferred today.`,
       });
     }
 
@@ -398,7 +398,7 @@ router.post("/by-upi", verifyToken, async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `₹${amount} successfully transfer ho gaya!`,
+      message: `₹${amount} successfully transfer`,
       data: {
         sender: {
           account_number: sender_account_number,

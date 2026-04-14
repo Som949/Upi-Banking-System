@@ -369,7 +369,7 @@ function SearchCustomer() {
 	const [query, setQuery] = useState('')
 	const [selectedCustomer, setSelectedCustomer] = useState(null)
 	const [isSearching, setIsSearching] = useState(false)
-	const [searchError, setSearchError] = useState('') // ✅ ADDED
+	const [searchError, setSearchError] = useState('') 
 
 	const topTabs = useMemo(
 		() => [
@@ -381,7 +381,7 @@ function SearchCustomer() {
 		[],
 	)
 
-	// ✅ UPDATED: Real API se connected
+	//  UPDATED: Real API se connected
 	const handleSearch = async () => {
 		const normalized = query.trim()
 		if (!normalized) return
@@ -423,11 +423,11 @@ function SearchCustomer() {
 		}
 	}
 
-	// ✅ ADDED: Delete handler
+	//  ADDED: Delete handler
 	const handleDelete = async () => {
 		if (!selectedCustomer) return
 		const confirmed = window.confirm(
-			`Kya aap sach mein ${selectedCustomer.fullName} (${selectedCustomer.accountNumber}) ka account delete karna chahte hain?`
+			`Are you sure you want to delete the account of ${selectedCustomer.fullName} (${selectedCustomer.accountNumber})?`
 		)
 		if (!confirmed) return
 
@@ -445,7 +445,7 @@ function SearchCustomer() {
 		}
 	}
 
-	// ✅ ADDED: Enter key se search
+	// ADDED: Enter key se search
 	const handleKeyDown = (e) => {
 		if (e.key === 'Enter') handleSearch()
 	}

@@ -17,14 +17,14 @@ router.post("/register", async (req, res) => {
     if (!account_number || !bank_pin || !password || !confirm_password) {
       return res.status(400).json({
         success: false,
-        message: "Sabhi fields zaroori hain: account_number, bank_pin, password, confirm_password",
+        message: "All fields are required: account number, bank PIN, password, and confirm password.",
       });
     }
 
     if (password !== confirm_password) {
       return res.status(400).json({
         success: false,
-        message: "Password aur confirm password match nahi kar rahe.",
+        message: "The password and confirm password do not match.",
       });
     }
 
@@ -34,7 +34,7 @@ router.post("/register", async (req, res) => {
     if (!strongPassword.test(password)) {
       return res.status(400).json({
         success: false,
-        message: "Password mein chahiye: 8+ chars, 1 uppercase, 1 number, 1 special char",
+        message: "The password must contain at least 8 characters, including at least one uppercase letter, one number, and one special character.",
       });
     }
 
@@ -49,7 +49,7 @@ router.post("/register", async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "Ye account number bank mein registered nahi hai.",
+        message: "The provided account number is not registered with the bank.",
       });
     }
 
@@ -59,7 +59,7 @@ router.post("/register", async (req, res) => {
     if (!isPinValid) {
       return res.status(401).json({
         success: false,
-        message: "Bank PIN galat hai.",
+        message: "Wrong bank PIN",
       });
     }
 
@@ -72,7 +72,7 @@ router.post("/register", async (req, res) => {
     if (existingUpi.rows.length > 0) {
       return res.status(400).json({
         success: false,
-        message: "Is account ka UPI account pehle se registered hai.",
+        message: "This account is already registered with a UPI account.",
       });
     }
 
@@ -93,7 +93,7 @@ router.post("/register", async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "UPI account create ho gaya! Ab transaction PIN set karo.",
+      message: "Your UPI account has been successfully created. Please set your transaction PIN.",
       data: {
         upi_address: upiAddress,
         account_number: account_number,
@@ -109,7 +109,7 @@ router.post("/register", async (req, res) => {
 });
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 🔐 POST /upi/set-pin
+//  POST /upi/set-pin
 // Registration ke baad transaction PIN set karo
 // Body: { account_number, upi_pin, confirm_upi_pin }
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -120,7 +120,7 @@ router.post("/set-pin", async (req, res) => {
     if (!account_number || !upi_pin || !confirm_upi_pin) {
       return res.status(400).json({
         success: false,
-        message: "account_number, upi_pin, confirm_upi_pin zaroori hain.",
+        message: "The following fields are required: account number, UPI PIN, and confirm UPI PIN.",
       });
     }
 
@@ -129,14 +129,14 @@ router.post("/set-pin", async (req, res) => {
     if (!pinRegex.test(upi_pin)) {
       return res.status(400).json({
         success: false,
-        message: "UPI PIN 4 se 6 digits ka hona chahiye.",
+        message: "The UPI PIN must be 4 to 6 digits long.",
       });
     }
 
     if (upi_pin !== confirm_upi_pin) {
       return res.status(400).json({
         success: false,
-        message: "PIN aur confirm PIN match nahi kar rahe.",
+        message: "The PIN and confirm PIN do not match..",
       });
     }
 
@@ -149,7 +149,7 @@ router.post("/set-pin", async (req, res) => {
     if (upiResult.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "UPI account nahi mila. Pehle register karo.",
+        message: "No UPI account was found. Please register first.",
       });
     }
 
@@ -163,7 +163,7 @@ router.post("/set-pin", async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "UPI PIN successfully set ho gaya! Ab login karo.",
+      message: "Your UPI PIN has been successfully set. Please log in now.",
       next_step: "POST /upi/login",
     });
 
@@ -184,7 +184,7 @@ router.post("/login", async (req, res) => {
     if (!account_number || !password) {
       return res.status(400).json({
         success: false,
-        message: "account_number aur password chahiye.",
+        message: "The account number and password are required.",
       });
     }
 
@@ -202,14 +202,14 @@ router.post("/login", async (req, res) => {
     if (!upiAccount) {
       return res.status(404).json({
         success: false,
-        message: "UPI account nahi mila.",
+        message: "UPI account not found.",
       });
     }
 
     if (!upiAccount.is_active) {
       return res.status(403).json({
         success: false,
-        message: "Account inactive hai.",
+        message: "Account inactive.",
       });
     }
 
@@ -217,7 +217,7 @@ router.post("/login", async (req, res) => {
     if (!upiAccount.upi_pin_hash) {
       return res.status(403).json({
         success: false,
-        message: "Pehle UPI PIN set karo.",
+        message: "Please set your UPI PIN first.",
         next_step: "POST /upi/set-pin",
       });
     }
@@ -228,7 +228,7 @@ router.post("/login", async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: "Galat password.",
+        message: "wrong Password",
       });
     }
 

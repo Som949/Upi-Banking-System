@@ -9,7 +9,7 @@ const seedAdmin = async () => {
   const existing = await pool.query("SELECT * FROM admin LIMIT 1");
 
   if (existing.rows.length > 0) {
-    console.log("⚠️  Admin pehle se exist karta hai. Seed skip.");
+    console.log("⚠️ An admin account already exists. Seed operation skipped.");
     process.exit(0);
   }
 
@@ -26,6 +26,6 @@ const seedAdmin = async () => {
 };
 
 seedAdmin().catch((err) => {
-  console.error("❌ Seed failed:", err.message);
+  console.error(" Seed failed:", err.message);
   process.exit(1);
 });

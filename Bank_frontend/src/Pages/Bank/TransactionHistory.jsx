@@ -335,7 +335,7 @@ export default function TransactionHistory() {
 				setCustomerName(res.data.full_name)
 				setTransactions(res.data.transactions)
 			} else {
-				setError(res.message || 'Transactions nahi mile')
+				setError(res.message || 'Transactions not found')
 			}
 		} catch {
 			setError('Server is not Connected')

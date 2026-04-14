@@ -35,7 +35,7 @@ const verifyUpiToken = (req, res, next) => {
   if (!token) {
     return res.status(401).json({
       success: false,
-      message: "Access denied. Token nahi mila.",
+      message: "Access denied. Token not  found.",
     });
   }
 
@@ -46,7 +46,7 @@ const verifyUpiToken = (req, res, next) => {
   } catch (err) {
     return res.status(403).json({
       success: false,
-      message: "Invalid ya expired token. Dobara login karo.",
+      message: "The token is invalid or has expired. Please log in again.",
     });
   }
 };
