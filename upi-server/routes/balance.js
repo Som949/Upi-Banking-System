@@ -18,7 +18,7 @@ router.post("/", verifyToken, async (req, res) => {
     if (!account_number || !upi_pin) {
       return res.status(400).json({
         success: false,
-        message: "account_number aur upi_pin dono zaroori hain.",
+        message: "Both the account number and UPI PIN are required.",
       });
     }
 
@@ -33,7 +33,7 @@ router.post("/", verifyToken, async (req, res) => {
     if (!upiAccount) {
       return res.status(404).json({
         success: false,
-        message: "UPI account nahi mila.",
+        message: "UPI account not found",
       });
     }
 
@@ -43,7 +43,7 @@ router.post("/", verifyToken, async (req, res) => {
     if (!isPinValid) {
       return res.status(401).json({
         success: false,
-        message: "Galat UPI PIN.",
+        message: "wrong UPI PIN.",
       });
     }
 

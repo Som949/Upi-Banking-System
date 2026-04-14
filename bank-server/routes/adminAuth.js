@@ -17,7 +17,7 @@ router.post("/login", async (req, res) => {
     if (!password) {
       return res.status(400).json({
         success: false,
-        message: "Password daalna zaroori hai.",
+        message: "Entering a password is required.",
       });
     }
 
@@ -31,7 +31,7 @@ router.post("/login", async (req, res) => {
     if (!admin) {
       return res.status(500).json({
         success: false,
-        message: "Admin account nahi mila. Seed script chalao pehle.",
+        message: "The admin account was not found. Please run the seed script first",
       });
     }
 
@@ -41,7 +41,7 @@ router.post("/login", async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: "Galat password.",
+        message: "Wrong password.",
       });
     }
 
@@ -81,21 +81,21 @@ router.post("/change-password", verifyToken, async (req, res) => {
     if (!current_password || !new_password || !confirm_password) {
       return res.status(400).json({
         success: false,
-        message: "Teeno fields bharne zaroori hain.",
+        message: "All three fields are required.",
       });
     }
 
     if (new_password !== confirm_password) {
       return res.status(400).json({
         success: false,
-        message: "New password aur confirm password match nahi kar rahe.",
+        message: "The new password and confirm password do not match.",
       });
     }
 
     if (current_password === new_password) {
       return res.status(400).json({
         success: false,
-        message: "Naya password purane se alag hona chahiye.",
+        message: "The new password must be different from the old password.",
       });
     }
 
@@ -106,7 +106,7 @@ router.post("/change-password", verifyToken, async (req, res) => {
       return res.status(400).json({
         success: false,
         message:
-          "Password mein chahiye: 8+ characters, 1 uppercase, 1 number, 1 special char (!@#$%^&*)",
+          "The password must contain at least 8 characters, including at least one uppercase letter, one number, and one special character (!@#$%^&*).",
       });
     }
 
@@ -119,7 +119,7 @@ router.post("/change-password", verifyToken, async (req, res) => {
     if (!admin) {
       return res.status(500).json({
         success: false,
-        message: "Admin record nahi mila.",
+        message: "Admin record not found",
       });
     }
 
@@ -129,7 +129,7 @@ router.post("/change-password", verifyToken, async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: "Current password galat hai.",
+        message: "Current password is wrong.",
       });
     }
 
@@ -155,7 +155,7 @@ router.post("/change-password", verifyToken, async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Password successfully change ho gaya!",
+      message: "Password successfully changed!",
       token: newToken,
     });
 

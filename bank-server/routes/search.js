@@ -34,13 +34,13 @@ router.get("/profile/:account_number", verifyToken, checkDefaultPassword, async 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "Koi user nahi mila is account number se.",
+        message: "No user was found with this account number.",
       });
     }
 
     return res.status(200).json({
       success: true,
-      message: "User profile mila!",
+      message: "User profile found!",
       data: {
         user_id:        user.user_id,
         full_name:      user.full_name,
@@ -82,14 +82,14 @@ router.get("/balance/:account_number", verifyToken, checkDefaultPassword, async 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "Account number nahi mila.",
+        message: "Account number not found.",
       });
     }
 
     if (!user.is_active) {
       return res.status(403).json({
         success: false,
-        message: "Ye account inactive hai.",
+        message: "This account is inactive.",
       });
     }
 
@@ -128,7 +128,7 @@ router.get("/transactions/:account_number", verifyToken, checkDefaultPassword, a
     if (userCheck.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "Account number nahi mila.",
+        message: "Account number not found.",
       });
     }
 
@@ -176,7 +176,7 @@ router.get("/transactions/:account_number", verifyToken, checkDefaultPassword, a
 
     return res.status(200).json({
       success: true,
-      message: `${transactions.length} transactions mile.`,
+      message: `${transactions.length} transactions found.`,
       data: {
         account_number,
         full_name:    userCheck.rows[0].full_name,
@@ -211,7 +211,7 @@ router.delete("/delete/:account_number", verifyToken, checkDefaultPassword, asyn
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "Account number nahi mila.",
+        message: "Account number not found.",
       });
     }
 
@@ -219,7 +219,7 @@ router.delete("/delete/:account_number", verifyToken, checkDefaultPassword, asyn
     if (Number(user.balance) > 0) {
       return res.status(400).json({
         success: false,
-        message: `Account mein ₹${user.balance} balance hai. Pehle withdraw karo phir delete karo.`,
+        message: `The account has a balance of ₹${user.balance}. Please withdraw the funds before deleting the account.`,
       });
     }
 
@@ -269,7 +269,7 @@ router.delete("/delete/:account_number", verifyToken, checkDefaultPassword, asyn
 
     return res.status(200).json({
       success: true,
-      message: `Account ${account_number} (${user.full_name}) successfully delete ho gaya!`,
+      message: `Account ${account_number} (${user.full_name}) successfully deleted!`,
     });
 
   } catch (err) {

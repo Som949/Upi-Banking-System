@@ -21,7 +21,7 @@ router.get("/:account_number", verifyToken, async (req, res) => {
     if (userCheck.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "Account number nahi mila.",
+        message: "Account number not found",
       });
     }
 
@@ -78,7 +78,7 @@ router.get("/:account_number", verifyToken, async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `${transactions.length} transactions mile.`,
+      message: `${transactions.length} transactions found.`,
       data: {
         account_number,
         full_name:          userCheck.rows[0].full_name,

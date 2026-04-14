@@ -42,7 +42,7 @@ const generateAccountNo = async () => {
       "SELECT account_number FROM users WHERE account_number = $1",
       [accNo]
     );
-    if (result.rows.length === 0) return accNo; // unique mila
+    if (result.rows.length === 0) return accNo; 
   }
 };
 
@@ -60,7 +60,7 @@ router.post("/send-otp", verifyToken, checkDefaultPassword, async (req, res) => 
     if (!full_name || !dob || !phone_number || !email || !pin) {
       return res.status(400).json({
         success: false,
-        message: "Sabhi fields bharne zaroori hain: full_name, dob, phone_number, email, pin",
+        message: "All fields must be filled: full name, date of birth, phone number, email, and PIN.",
       });
     }
 
@@ -69,7 +69,7 @@ router.post("/send-otp", verifyToken, checkDefaultPassword, async (req, res) => 
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
-        message: "Valid email daalo.",
+        message: "Enter Valid email.",
       });
     }
 
@@ -78,7 +78,7 @@ router.post("/send-otp", verifyToken, checkDefaultPassword, async (req, res) => 
     if (!phoneRegex.test(phone_number)) {
       return res.status(400).json({
         success: false,
-        message: "Phone number 10 digit ka hona chahiye.",
+        message: "The phone number must be 10 digits long",
       });
     }
 
@@ -87,7 +87,7 @@ router.post("/send-otp", verifyToken, checkDefaultPassword, async (req, res) => 
     if (!pinRegex.test(pin)) {
       return res.status(400).json({
         success: false,
-        message: "PIN 4 se 6 digits ka hona chahiye.",
+        message: "The PIN must be 4 to 6 digits long.",
       });
     }
 
@@ -99,7 +99,7 @@ router.post("/send-otp", verifyToken, checkDefaultPassword, async (req, res) => 
     if (emailCheck.rows.length > 0) {
       return res.status(400).json({
         success: false,
-        message: "Ye email pehle se registered hai.",
+        message: "This email is already registered.",
       });
     }
 
@@ -111,7 +111,7 @@ router.post("/send-otp", verifyToken, checkDefaultPassword, async (req, res) => 
     if (phoneCheck.rows.length > 0) {
       return res.status(400).json({
         success: false,
-        message: "Ye phone number pehle se registered hai.",
+        message: "This phone number is already registered",
       });
     }
 
@@ -160,7 +160,7 @@ router.post("/send-otp", verifyToken, checkDefaultPassword, async (req, res) => 
 
     return res.status(200).json({
       success: true,
-      message: `OTP ${email} pe bhej diya gaya. 5 minutes mein enter karo.`,
+      message: `An OTP has been sent to ${email}. Please enter it within 5 minutes.`,
       email, // frontend ko email yaad rakhni hai verify ke liye
     });
 
@@ -183,7 +183,7 @@ router.post("/create", verifyToken, checkDefaultPassword, async (req, res) => {
     if (!email || !otp) {
       return res.status(400).json({
         success: false,
-        message: "Email aur OTP dono chahiye.",
+        message: "Both the email and OTP are required",
       });
     }
 
@@ -203,7 +203,7 @@ router.post("/create", verifyToken, checkDefaultPassword, async (req, res) => {
     if (!otpRecord) {
       return res.status(400).json({
         success: false,
-        message: "Koi valid OTP nahi mila. Pehle send-otp karo.",
+        message: "No valid OTP was found. Please send an OTP first.",
       });
     }
 
@@ -211,7 +211,7 @@ router.post("/create", verifyToken, checkDefaultPassword, async (req, res) => {
     if (new Date() > new Date(otpRecord.expires_at)) {
       return res.status(400).json({
         success: false,
-        message: "OTP expire ho gaya. Dobara send-otp karo.",
+        message: "The OTP has expired. Please request a new OTP.",
       });
     }
 
@@ -219,7 +219,7 @@ router.post("/create", verifyToken, checkDefaultPassword, async (req, res) => {
     if (otpRecord.otp !== otp) {
       return res.status(400).json({
         success: false,
-        message: "Galat OTP.",
+        message: "Wrong OTP.",
       });
     }
 
@@ -253,7 +253,7 @@ router.post("/create", verifyToken, checkDefaultPassword, async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "Account successfully create ho gaya!",
+      message: "Account successfully created!",
       data: {
         user_id: userId,
         account_number: accountNo,
@@ -287,14 +287,14 @@ router.post("/deposit", verifyToken, checkDefaultPassword, async (req, res) => {
     if (!account_number || !amount) {
       return res.status(400).json({
         success: false,
-        message: "account_number aur amount dono chahiye.",
+        message: "Both the account number and amount are required.",
       });
     }
 
    if (isNaN(amount) || Number(amount) <= 0) {
   return res.status(400).json({
     success: false,
-    message: "Amount valid aur 0 se zyada hona chahiye.",
+    message: "The amount must be valid and greater than zero.",
   });
 }
 
@@ -317,7 +317,7 @@ const DAILY_DEPOSIT_LIMIT = Number(process.env.DAILY_DEPOSIT_LIMIT) || 100000;
 if (depositedToday + Number(amount) > DAILY_DEPOSIT_LIMIT) {
   return res.status(400).json({
     success: false,
-    message: `Daily deposit limit ₹${DAILY_DEPOSIT_LIMIT} exceed ho jaayegi. Aaj already ₹${depositedToday} deposit ho chuka hai. Aur sirf ₹${DAILY_DEPOSIT_LIMIT - depositedToday} deposit kar sakte ho.`,
+    message: `The daily deposit limit of ₹${DAILY_DEPOSIT_LIMIT} will be exceeded. ₹${depositedToday} has already been deposited today. You can only deposit ₹${DAILY_DEPOSIT_LIMIT - depositedToday} more.`,
   });
 }
 
@@ -332,14 +332,14 @@ if (depositedToday + Number(amount) > DAILY_DEPOSIT_LIMIT) {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "Account number nahi mila.",
+        message: "Account number not found.",
       });
     }
 
     if (!user.is_active) {
       return res.status(403).json({
         success: false,
-        message: "Account inactive hai.",
+        message: "Account is inactive.",
       });
     }
 
@@ -361,7 +361,7 @@ if (depositedToday + Number(amount) > DAILY_DEPOSIT_LIMIT) {
 
     return res.status(200).json({
       success: true,
-      message: `₹${amount} successfully deposit ho gaya!`,
+      message: `₹${amount} successfully deposited!`,
       data: {
         account_number,
         full_name: user.full_name,
@@ -389,14 +389,14 @@ router.post("/withdraw", verifyToken, checkDefaultPassword, async (req, res) => 
     if (!account_number || !amount) {
       return res.status(400).json({
         success: false,
-        message: "account_number aur amount dono chahiye.",
+        message: "Both the account number and amount are required.",
       });
     }
 
     if (isNaN(amount) || Number(amount) <= 0) {
       return res.status(400).json({
         success: false,
-        message: "Amount valid aur 0 se zyada hona chahiye.",
+        message: "The amount must be valid and greater than zero.",
       });
     }
 
@@ -411,14 +411,14 @@ router.post("/withdraw", verifyToken, checkDefaultPassword, async (req, res) => 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "Account number nahi mila.",
+        message: "Account number not found",
       });
     }
 
     if (!user.is_active) {
       return res.status(403).json({
         success: false,
-        message: "Account inactive hai.",
+        message: "Account is inactive.",
       });
     }
 
@@ -449,7 +449,7 @@ const DAILY_WITHDRAW_LIMIT = Number(process.env.DAILY_WITHDRAW_LIMIT) || 100000;
 if (withdrawnToday + Number(amount) > DAILY_WITHDRAW_LIMIT) {
   return res.status(400).json({
     success: false,
-    message: `Daily withdrawal limit ₹${DAILY_WITHDRAW_LIMIT} exceed ho jaayegi. Aaj already ₹${withdrawnToday} withdraw ho chuka hai. Aur sirf ₹${DAILY_WITHDRAW_LIMIT - withdrawnToday} withdraw kar sakte ho.`,
+    message: `The daily withdrawal limit of ₹${DAILY_WITHDRAW_LIMIT} will be exceeded. ₹${withdrawnToday} has already been withdrawn today. You can only withdraw ₹${DAILY_WITHDRAW_LIMIT - withdrawnToday} more.`,
   });
 }
 
@@ -471,7 +471,7 @@ const newBalance = Number(user.balance) - Number(amount);
 
     return res.status(200).json({
       success: true,
-      message: `₹${amount} successfully withdraw ho gaya!`,
+      message: `₹${amount} successfully withdrawn!`,
       data: {
         account_number,
         full_name: user.full_name,
@@ -499,21 +499,21 @@ router.post("/transfer", verifyToken, checkDefaultPassword, async (req, res) => 
     if (!sender_account_no || !receiver_account_no || !amount) {
       return res.status(400).json({
         success: false,
-        message: "sender_account_no, receiver_account_no aur amount chahiye.",
+        message: "The sender account number, receiver account number, and amount are required.",
       });
     }
 
     if (sender_account_no === receiver_account_no) {
       return res.status(400).json({
         success: false,
-        message: "Sender aur receiver account same nahi ho sakta.",
+        message: "Sender aur receiver account cannot be same.",
       });
     }
 
     if (isNaN(amount) || Number(amount) <= 0) {
       return res.status(400).json({
         success: false,
-        message: "Amount valid aur 0 se zyada hona chahiye.",
+        message: "The amount must be valid and greater than zero.",
       });
     }
 
@@ -527,14 +527,14 @@ router.post("/transfer", verifyToken, checkDefaultPassword, async (req, res) => 
     if (!sender) {
       return res.status(404).json({
         success: false,
-        message: "Sender account nahi mila.",
+        message: "Sender account not found.",
       });
     }
 
     if (!sender.is_active) {
       return res.status(403).json({
         success: false,
-        message: "Sender account inactive hai.",
+        message: "Sender account is inactive.",
       });
     }
 
@@ -548,14 +548,14 @@ router.post("/transfer", verifyToken, checkDefaultPassword, async (req, res) => 
     if (!receiver) {
       return res.status(404).json({
         success: false,
-        message: "Receiver account nahi mila.",
+        message: "Receiver account not found.",
       });
     }
 
     if (!receiver.is_active) {
       return res.status(403).json({
         success: false,
-        message: "Receiver account inactive hai.",
+        message: "Receiver account is inactive.",
       });
     }
 
@@ -585,7 +585,7 @@ router.post("/transfer", verifyToken, checkDefaultPassword, async (req, res) => 
     if (alreadyTransferred + Number(amount) > DAILY_LIMIT) {
       return res.status(400).json({
         success: false,
-        message: `Daily transfer limit ₹${DAILY_LIMIT} exceed ho jaayegi. Aaj already ₹${alreadyTransferred} transfer ho chuka hai.`,
+        message: `The daily transfer limit of ₹${DAILY_LIMIT} will be exceeded. ₹${alreadyTransferred} has already been transferred today.`,
       });
     }
 
@@ -631,7 +631,7 @@ router.post("/transfer", verifyToken, checkDefaultPassword, async (req, res) => 
 
     return res.status(200).json({
       success: true,
-      message: `₹${amount} successfully transfer ho gaya!`,
+      message: `₹${amount} successfully transfer!`,
       data: {
         sender: {
           account_number: sender_account_no,

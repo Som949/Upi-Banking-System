@@ -8,7 +8,7 @@ const verifyToken = (req, res, next) => {
   if (!token) {
     return res.status(401).json({
       success: false,
-      message: "Access denied. Token nahi mila.",
+      message: "Access denied.No Token found.",
     });
   }
 
@@ -19,7 +19,7 @@ const verifyToken = (req, res, next) => {
   } catch (err) {
     return res.status(403).json({
       success: false,
-      message: "Invalid ya expired token. Dobara login karo.",
+      message: "Invalid or expired token. Login again.",
     });
   }
 };
@@ -29,7 +29,7 @@ const checkDefaultPassword = (req, res, next) => {
     return res.status(403).json({
       success: false,
       is_default_password: true,
-      message: "Pehle default password change karo.",
+      message: "Please change the default password first.",
     });
   }
   next();
